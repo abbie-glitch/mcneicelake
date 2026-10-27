@@ -82,6 +82,22 @@ details summary{font-weight:700;min-height:44px;display:flex;align-items:center}
 .chip{border:2px solid var(--r);background:#fff;color:var(--r);border-radius:999px;min-height:44px;padding:0 14px;font-weight:700;font-size:16px}
 .gh{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sm{min-height:44px;font-size:15px;padding:0 12px}
+.seg.two{grid-template-columns:1fr 1fr}
+.b2:disabled{opacity:.35;cursor:default}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cg>b{text-align:center;font-size:14px}
+.cd{min-height:56px;border:2px solid var(--pk);background:#fff;border-radius:14px;padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:700;font-size:16px;min-width:0}
+.cd i{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;min-height:10px;padding:0 2px}
+.cd.tod{border-color:var(--r)}
+.cd.sel{background:var(--r);color:#fff}
+.cd:disabled{opacity:.3}
+u{display:inline-block;width:8px;height:8px;border-radius:50%;text-decoration:none}
+u.sq{border-radius:2px}
+u.dia{border-radius:2px;transform:rotate(45deg) scale(.9)}
+u.ring{background:#fff;border:2.5px solid;width:10px;height:10px}
+.cd.sel u{box-shadow:0 0 0 1.5px #fff}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
 .vine{text-align:center;letter-spacing:6px;font-size:14px;margin:-4px 0;opacity:.9}
 </style>
 </head>
@@ -90,8 +106,10 @@ details summary{font-weight:700;min-height:44px;display:flex;align-items:center}
 <div id="app"></div>
 <script>
 const API="https://script.google.com/macros/s/AKfycbwpcnLnaJUMTgI7x2UeBzSMOlcC50BJrLzHvgoQgwqpuhk0ao7-q8vWGmwYx3Y5hzz2/exec"
-const PEOPLE=["Sheila","Bill","Megan"],DN=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const START="2026-10-27",PCOL={Sheila:"#E0457B",Bill:"#2F6FDE",Megan:"#8B4FC7",Everyone:"#2E9E5B"},BCOL="#E5B400",SCOL="#17A2B8";
+const PEOPLE=["Sheila","Bill","Megan"],WHO=[...PEOPLE,"Everyone"],ty=a=>a.y=="s"?"\u{1F389} ":"",tsel='<select id="ay"><option value="a">\u{1F4C5} Appointment</option><option value="s">\u{1F389} Social plan</option></select>',DN=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const wd=x=>DN[(x.getDay()+6)%7];
 const pad=n=>String(n).padStart(2,"0");
 const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const fromIso=s=>{const p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])};
@@ -103,7 +121,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const val=id=>{const e=document.getElementById(id);return e?e.value.trim():""};
 let S={},pend={},code="";
 try{S=JSON.parse(localStorage.getItem("fp_s")||"{}");pend=JSON.parse(localStorage.getItem("fp_p")||"{}");code=localStorage.getItem("fp_c")||""}catch(e){}
-let tab="today",lt="todo",lastStore="",picked="",wk=monday(new Date()),status="";
+let wv="list",calM=new Date(new Date().getFullYear(),new Date().getMonth(),1),calSel=iso(new Date()),tab="today",lt="todo",lastStore="",picked="",wk=monday(new Date()),status="";
 const keep=()=>{try{localStorage.setItem("fp_s",JSON.stringify(S));localStorage.setItem("fp_p",JSON.stringify(pend))}catch(e){}};
 const ready=()=>API.indexOf("http")===0;
 function setStatus(t){status=t;const e=document.getElementById("st");if(e)e.textContent=t}
@@ -149,8 +167,8 @@ else body=`<div class="ans no"><b>No swim planned today</b></div><div class="two
 return `<div class="card"><h2>\u{1F3CA}‍♀️ Did Sheila swim today?</h2>${body}</div>`}
 function swWeek(days){const n=days.filter(x=>swv(iso(x)).s=="done").length,p=days.filter(x=>swv(iso(x)).s=="plan").length;
 return `<div class="card"><h2>\u{1F3CA}‍♀️ Sheila's swims</h2><span class="mut">${n} swam, ${p} planned this week. Tap a day to change it.</span>`+days.map((x,i)=>{const d=iso(x),s=swv(d).s||"",lbl=s=="done"?"\u{1F30A} Swam!":s=="plan"?"\u{1F3CA} Planned":"No swim";
-return `<div class="swr"><b>${DN[i].slice(0,3)} ${x.getDate()}</b><button class="swb ${s}" data-a="swc" data-k="${d}">${lbl}</button>${s?`<input type="text" data-sw="${d}" placeholder="Time or note (e.g. 10am)" value="${esc(swv(d).x)}">`:""}</div>`}).join("")+`</div>`}
-const apptRow=a=>`<div class="item"><span><b>${esc(a.t||"")}</b> ${esc(a.w)}: ${esc(a.x)}</span>${del(a.k)}</div>`;
+return `<div class="swr"><b>${wd(x).slice(0,3)} ${x.getDate()}</b><button class="swb ${s}" data-a="swc" data-k="${d}">${lbl}</button>${s?`<input type="text" data-sw="${d}" placeholder="Time or note (e.g. 10am)" value="${esc(swv(d).x)}">`:""}</div>`}).join("")+`</div>`}
+const apptRow=a=>`<div class="item"><span><b>${esc(a.t||"")}</b> ${esc(a.w)}: ${ty(a)}${esc(a.x)}</span>${del(a.k)}</div>`;
 function dueLbl(b){const df=Math.round((fromIso(b.d)-fromIso(iso(new Date())))/864e5);return df<0?["Overdue by "+(-df)+" day"+(df==-1?"":"s"),0]:df==0?["Due today",0]:["Due in "+df+" day"+(df==1?"":"s"),df<=3?0:1]}
 const billRow=b=>{const l=dueLbl(b);return `<div class="item"><span><b>${esc(b.n)}</b> ${esc(b.amt)}<br><span class="pill${l[1]?" ok":""}">${l[0]}</span> <span class="mut">${fd(fromIso(b.d),{day:"numeric",month:"short"})}</span></span><button class="b2" data-a="paid" data-k="${esc(b.k)}">Paid &#10003;</button>${del(b.k)}</div>`};
 const chatRow=c=>`<div class="item"><span><b>${esc(c.w)}</b> ${esc(c.x||"")}<br><span class="mut">${tm(c.t)}</span></span>${del(c.k)}</div>`;
@@ -159,20 +177,41 @@ bl=list("bill|").filter(b=>!b.paid&&Math.round((fromIso(b.d)-fromIso(d))/864e5)<
 return hello()+pain()+meds(d)+swToday()+meals(d,"Today's meals")+`<div class="card"><h2>\u{1F4C5} Appointments today</h2>${ap.length?ap.map(apptRow).join(""):'<span class="mut">Nothing booked today.</span>'}</div>
 <div class="card"><h2>\u{1F4B6} Bills due soon</h2>${bl.length?bl.map(billRow).join(""):'<span class="mut">Nothing due this week.</span>'}</div>
 <div class="card"><h2>\u{1F4AC} Who did we chat to today?</h2>${ch.length?ch.map(chatRow).join(""):'<span class="mut">No chats logged yet.</span>'}<button class="b2" data-a="tab" data-k="chats">Add a chat</button></div>`}
-function vWeek(){const days=[...Array(7)].map((_,i)=>addD(wk,i)),ap=list("appt|").filter(a=>a.d>=iso(days[0])&&a.d<=iso(days[6]));
-return `<div class="wk"><button class="b2" data-a="wk" data-k="-1" aria-label="Previous week">&#8249;</button><h2>Week of ${fd(wk,{day:"numeric",month:"short"})}</h2><button class="b2" data-a="wk" data-k="1" aria-label="Next week">&#8250;</button></div>`+swWeek(days)+
-`<div class="card"><h2>\u{1F4C5} Appointments this week</h2>${PEOPLE.map(p=>{const m=ap.filter(a=>a.w==p).sort((a,b)=>(a.d+(a.t||""))<(b.d+(b.t||""))?-1:1);return `<h3>${p}</h3>${m.length?m.map(a=>`<div class="item"><span><b>${DN[(fromIso(a.d).getDay()+6)%7]}</b> ${esc(a.t||"")} ${esc(a.x)}</span>${del(a.k)}</div>`).join(""):'<span class="mut">None</span>'}`}).join("")}
-<h3>Add an appointment</h3><div class="add"><div class="two"><select id="aw">${PEOPLE.map(p=>`<option>${p}</option>`).join("")}</select><select id="ad">${days.map((x,i)=>`<option value="${iso(x)}">${DN[i].slice(0,3)} ${x.getDate()}</option>`).join("")}</select></div><label class="f">Time<input type="time" id="at"></label><input type="text" id="ax" placeholder="What is it?"><button class="b" data-a="addap">Add</button></div></div>`+
-days.map((x,i)=>meals(iso(x),DN[i]+" "+fd(x,{day:"numeric",month:"short"}))).join("")}
+function vWeek(){const seg=`<div class="seg two">${[["list","This week"],["cal","Calendar"]].map(x=>`<button class="${wv==x[0]?"on":""}" data-a="wv" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;return seg+(wv=="cal"?vCal():vWeekList())}
+function vWeekList(){const m0=monday(fromIso(START)),days=[...Array(7)].map((_,i)=>addD(wk,i)).filter(x=>iso(x)>=START),ap=days.length?list("appt|").filter(a=>a.d>=iso(days[0])&&a.d<=iso(days[days.length-1])):[];
+return `<div class="wk"><button class="b2" data-a="wk" data-k="-1" aria-label="Previous week"${wk<=m0?" disabled":""}>&#8249;</button><h2>Week of ${fd(wk,{day:"numeric",month:"short"})}</h2><button class="b2" data-a="wk" data-k="1" aria-label="Next week">&#8250;</button></div>`+swWeek(days)+
+`<div class="card"><h2>\u{1F4C5} Appointments this week</h2>${WHO.map(p=>{const m=ap.filter(a=>a.w==p).sort((a,b)=>(a.d+(a.t||""))<(b.d+(b.t||""))?-1:1);return `<h3>${p}</h3>${m.length?m.map(a=>`<div class="item"><span><b>${wd(fromIso(a.d))}</b> ${esc(a.t||"")} ${ty(a)}${esc(a.x)}</span>${del(a.k)}</div>`).join(""):'<span class="mut">None</span>'}`}).join("")}
+<h3>Add an appointment or social plan</h3><div class="add">${tsel}<div class="two"><select id="aw">${WHO.map(p=>`<option>${p}</option>`).join("")}</select><select id="ad">${days.map(x=>`<option value="${iso(x)}">${wd(x).slice(0,3)} ${x.getDate()}</option>`).join("")}</select></div><label class="f">Time<input type="time" id="at"></label><input type="text" id="ax" placeholder="What is it? (e.g. Dentist, Coffee with Ann)"><button class="b" data-a="addap">Add</button></div></div>`+
+days.map(x=>meals(iso(x),wd(x)+" "+fd(x,{day:"numeric",month:"short"}))).join("")}
+function vCal(){const y=calM.getFullYear(),mo=calM.getMonth(),off=(new Date(y,mo,1).getDay()+6)%7,dim=new Date(y,mo+1,0).getDate(),today=iso(new Date()),ap=list("appt|"),bl=list("bill|").filter(b=>!b.paid);
+const dots=d=>{let o="";ap.filter(a=>a.d==d).forEach(a=>o+=`<u class="${a.y=="s"?"dia":""}" style="background:${PCOL[a.w]||"#777"}"></u>`);if(bl.some(b=>b.d==d))o+=`<u class="sq" style="background:${BCOL}"></u>`;if(swv(d).s)o+=`<u class="ring" style="border-color:${SCOL}"></u>`;return o};
+let cells="";for(let i=0;i<off;i++)cells+="<span></span>";
+for(let n=1;n<=dim;n++){const d=y+"-"+pad(mo+1)+"-"+pad(n),pre=d<START;cells+=`<button class="cd${d==calSel?" sel":""}${d==today?" tod":""}"${pre?" disabled":""} data-a="cs" data-k="${d}"><span>${n}</span><i>${pre?"":dots(d)}</i></button>`}
+const sdt=fromIso(START),minM=new Date(sdt.getFullYear(),sdt.getMonth(),1),sd=fromIso(calSel),dapp=ap.filter(a=>a.d==calSel).sort((a,b)=>(a.t||"")<(b.t||"")?-1:1),dbl=bl.filter(b=>b.d==calSel),sv=swv(calSel);
+return `<div class="wk"><button class="b2" data-a="cmn" data-k="-1" aria-label="Previous month"${calM<=minM?" disabled":""}>&#8249;</button><h2>${fd(calM,{month:"long",year:"numeric"})}</h2><button class="b2" data-a="cmn" data-k="1" aria-label="Next month">&#8250;</button></div>
+<div class="card"><div class="cg">${["M","T","W","T","F","S","S"].map(x=>`<b>${x}</b>`).join("")}${cells}</div>
+<div class="legend">${WHO.map(p=>`<span><u style="background:${PCOL[p]}"></u>${p}</span>`).join("")}<span><u class="dia" style="background:#777"></u>Social plan</span><span><u class="sq" style="background:${BCOL}"></u>Bill due</span><span><u class="ring" style="border-color:${SCOL}"></u>Swim</span></div></div>
+<div class="card"><h2>${wd(sd)} ${fd(sd,{day:"numeric",month:"long"})}</h2>
+${dapp.map(a=>`<div class="item"><span><span class="pill" style="border-color:${PCOL[a.w]||"#777"}">${esc(a.w)}</span> <b>${esc(a.t||"")}</b> ${ty(a)}${esc(a.x)}</span>${del(a.k)}</div>`).join("")}
+${dbl.map(b=>`<div class="item"><span><b>${esc(b.n)}</b> ${esc(b.amt)}<br><span class="mut">Bill due</span></span><button class="b2" data-a="paid" data-k="${esc(b.k)}">Paid &#10003;</button></div>`).join("")}
+${sv.s?`<span>\u{1F3CA}\u200D\u2640\uFE0F Swim: ${sv.s=="done"?"swam \u{1F30A}":"planned"} ${esc(sv.x||"")}</span>`:""}
+${!dapp.length&&!dbl.length&&!sv.s?'<span class="mut">Nothing on this day.</span>':""}
+<h3>Add an appointment or social plan</h3><div class="add"><input type="hidden" id="ad" value="${calSel}">${tsel}<select id="aw">${WHO.map(p=>`<option>${p}</option>`).join("")}</select><label class="f">Time<input type="time" id="at"></label><input type="text" id="ax" placeholder="What is it? (e.g. Dentist, Coffee with Ann)"><button class="b" data-a="addap">Add</button></div></div>`}
 function vTodo(){const cw=iso(monday(new Date())),all=list("todo|"),it=all.filter(t=>!t.done||(t.rep&&t.dw!==cw)).sort((a,b)=>(a.c||0)-(b.c||0)),dl=all.filter(t=>t.done&&t.dw===cw).sort((a,b)=>(b.dt||0)-(a.dt||0));
 return `<div class="card"><h2>✅ To do this week</h2>${it.length?it.map(t=>`<div class="item">${chk(false,esc(t.x)+(t.rep?' <span class="mut">(weekly)</span>':""),"td",t.k)}${del(t.k)}</div>`).join(""):'<span class="mut">All done. Lovely! \u{1F389}\u{1F353}</span>'}
 <h3>Add something</h3><div class="add"><input type="text" id="tx" placeholder="What needs doing?"><label class="cb"><input type="checkbox" id="trep">Repeats every week</label><button class="b" data-a="addt">Add</button></div></div>`+(dl.length?`<div class="card"><h2>Done this week \u{1F389}</h2>${dl.map(t=>`<div class="item"><span>${esc(t.x)}</span><button class="b2 sm" data-a="tdb" data-k="${esc(t.k)}">Put back</button></div>`).join("")}</div>`:"")}
 function vBills(){const all=list("bill|"),un=all.filter(b=>!b.paid).sort((a,b)=>a.d<b.d?-1:1),pd=all.filter(b=>b.paid).sort((a,b)=>(a.pd||"")<(b.pd||"")?1:-1).slice(0,5);
 return `<div class="card"><h2>\u{1F4B6} Bills and payments</h2>${un.length?un.map(billRow).join(""):'<span class="mut">Nothing due. \u{1F389}</span>'}<h3>Add a bill</h3><div class="add"><input type="text" id="bn" placeholder="What is it? (e.g. electricity)"><input type="text" id="ba" placeholder="Amount (e.g. 85)"><label class="f">Due date<input type="date" id="bd"></label><label class="cb"><input type="checkbox" id="brep">Repeats every month</label><button class="b" data-a="addb">Add</button></div></div>
 ${pd.length?`<div class="card"><h2>Recently paid</h2>${pd.map(b=>`<div class="item"><span>${esc(b.n)} ${esc(b.amt)} <span class="mut">paid ${fd(fromIso(b.pd),{day:"numeric",month:"short"})}</span></span>${del(b.k)}</div>`).join("")}</div>`:""}`}
-function vChats(){const d=iso(new Date()),all=list("chat|"),ch=all.filter(c=>c.d==d).sort((a,b)=>a.t-b.t),old=all.filter(c=>c.d<d&&c.d>=iso(addD(new Date(),-7))).sort((a,b)=>b.t-a.t);
+let chatQ="",chatN=40;
+function chatLog(){const d=iso(new Date()),q=chatQ.trim().toLowerCase(),all=list("chat|").filter(c=>c.d<d&&c.d>=START&&(!q||((c.w||"")+" "+(c.x||"")).toLowerCase().indexOf(q)>-1)).sort((a,b)=>b.t-a.t),shown=all.slice(0,chatN);
+if(!all.length)return '<span class="mut">'+(q?"No chats match that.":"Earlier days will appear here.")+'</span>';
+let out="",last="";
+shown.forEach(c=>{if(c.d!==last){last=c.d;out+=`<h3>${fd(fromIso(c.d),{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</h3>`}out+=`<div class="item"><span><b>${esc(c.w)}</b> ${esc(c.x||"")}<br><span class="mut">${tm(c.t)}</span></span>${del(c.k)}</div>`});
+return `<span class="mut">${all.length} chat${all.length==1?"":"s"} logged${q?" matching":""}</span>`+out+(all.length>shown.length?'<button class="b2" data-a="cm">Show more</button>':"")}
+function vChats(){const d=iso(new Date()),ch=list("chat|").filter(c=>c.d==d).sort((a,b)=>a.t-b.t);
 return `<div class="card"><h2>\u{1F4AC} Who did we chat to today?</h2>${ch.length?ch.map(chatRow).join(""):'<span class="mut">No chats logged yet.</span>'}<h3>Add a chat</h3><div class="add"><input type="text" id="cw" placeholder="Who?"><input type="text" id="cx" placeholder="What about? (optional)"><button class="b" data-a="addc">Add</button></div></div>
-${old.length?`<div class="card"><h2>Earlier this week</h2>${old.map(c=>`<div class="item"><span><b>${esc(c.w)}</b> ${esc(c.x||"")}<br><span class="mut">${fd(fromIso(c.d),{weekday:"long"})}, ${tm(c.t)}</span></span>${del(c.k)}</div>`).join("")}</div>`:""}`}
+<div class="card"><h2>\u{1F4D6} Chat log</h2><input type="text" id="cq" placeholder="Search a name or topic" value="${esc(chatQ)}"><div id="clog" class="add">${chatLog()}</div><span class="mut">Every chat is kept here for good.</span></div>`}
 function vShop(){const now=Date.now(),all=list("shop|");
 all.filter(i=>i.done&&now-i.dt>864e5).forEach(i=>set(i.k,null));
 const stores=list("store|").sort((a,b)=>(a.c||0)-(b.c||0)),open=all.filter(i=>!i.done).sort((a,b)=>(a.c||0)-(b.c||0)),ks={};stores.forEach(x=>ks[x.k]=1);
@@ -197,8 +236,12 @@ const v=TABS.find(t=>t[0]==tab)[3];
 app.innerHTML=`<div class="top">${logo}<div class="ttl"><h1>McNeice-Lake Planner</h1><small id="st">${esc(status)}</small></div></div><div class="trail" aria-hidden="true"><svg class="ant"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-5s"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-11s"><use href="#ant"/></svg></div>${v()}<div class="vine" aria-hidden="true">\u{1F353} \u{1F353} \u{1F353}</div><nav class="nav">${TABS.map(t=>`<button class="${t[0]==tab?"on":""}" data-a="tab" data-k="${t[0]}"><span>${t[2]}</span>${t[1]}</button>`).join("")}</nav>`}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,k=b.dataset.k,cw=iso(monday(new Date())),td=iso(new Date());
 if(a=="tab"){tab=k;window.scrollTo(0,0)}
-else if(a=="wk")wk=addD(wk,7*+k);
+else if(a=="wk"){const n=addD(wk,7*+k);if(n>=monday(fromIso(START)))wk=n}
+else if(a=="wv")wv=k;
+else if(a=="cs")calSel=k;
+else if(a=="cmn"){const n=new Date(calM.getFullYear(),calM.getMonth()+ +k,1),sd=fromIso(START);if(n>=new Date(sd.getFullYear(),sd.getMonth(),1)){calM=n;const f=iso(n),t=iso(new Date());calSel=t.slice(0,7)==f.slice(0,7)&&t>=START?t:(f<START?START:f)}}
 else if(a=="lt")lt=k;
+else if(a=="cm")chatN+=40;
 else if(a=="code"){const c=val("cin");if(!c)return;code=c;localStorage.setItem("fp_c",c);pull()}
 else if(a=="tog")set(k,!S[k]);
 else if(a=="del")set(k,null);
@@ -206,7 +249,7 @@ else if(a=="sw"){const v=b.dataset.v,o=swv(k);if(!v)set("sw|"+k,null);else set("
 else if(a=="swc"){const o=swv(k),c=o.s||"",n=c==""?"plan":c=="plan"?"done":"";if(!n)set("sw|"+k,null);else set("sw|"+k,{s:n,x:o.x||""})}
 else if(a=="pain")set("pain|"+uid(),{t:Date.now()});
 else if(a=="painAt"){const v=val("pt");if(!v)return;const p=v.split(":"),x=new Date();x.setHours(+p[0],+p[1],0,0);if(x>new Date())x.setDate(x.getDate()-1);set("pain|"+uid(),{t:x.getTime()})}
-else if(a=="addap"){const x=val("ax");if(!x)return;set("appt|"+uid(),{w:val("aw"),d:val("ad"),t:val("at"),x:x})}
+else if(a=="addap"){const x=val("ax");if(!x)return;set("appt|"+uid(),{w:val("aw"),d:val("ad"),t:val("at"),x:x,y:val("ay")})}
 else if(a=="td")set(k,Object.assign({},S[k],{done:true,dw:cw,dt:Date.now()}));
 else if(a=="tdb")set(k,Object.assign({},S[k],{done:false,dw:""}));
 else if(a=="addt"){const x=val("tx");if(!x)return;set("todo|"+uid(),{x:x,rep:document.getElementById("trep").checked,done:false,c:Date.now()})}
@@ -221,6 +264,7 @@ else if(a=="pick"){const l=list("idea|");if(l.length)picked=l[Math.floor(Math.ra
 else if(a=="addc"){const w=val("cw");if(!w)return;set("chat|"+uid(),{d:td,t:Date.now(),w:w,x:val("cx")})}
 render()});
 document.addEventListener("input",e=>{const t=e.target,k=t.dataset&&t.dataset.k;
+if(t.id=="cq"){chatQ=t.value;chatN=40;const c=document.getElementById("clog");if(c)c.innerHTML=chatLog();return}
 if(t.dataset&&t.dataset.sw){const o=swv(t.dataset.sw);set("sw|"+t.dataset.sw,{s:o.s||"plan",x:t.value});return}
 if(k&&t.tagName=="INPUT")set(k,t.value)});
 document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.k;if(k&&k.indexOf("set|")==0)render()});
