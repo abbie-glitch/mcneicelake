@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#C81E3A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Picnic">
+<meta name="apple-mobile-web-app-title" content="McNeice-Lake">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <title>McNeice-Lake Planner</title>
@@ -139,10 +139,10 @@ ${old.length?`<div class="card"><h2>Earlier this week</h2>${old.map(c=>`<div cla
 const TABS=[["today","Today",vToday],["week","Week",vWeek],["todo","To-do",vTodo],["bills","Bills",vBills],["chats","Chats",vChats]];
 function render(){const app=document.getElementById("app");
 if(!ready()){app.innerHTML='<div class="card"><h2>Not set up yet</h2><span>Paste your web app link into the API line at the top of the script in index.html.</span></div>';return}
-if(!code){app.innerHTML='<div class="card"><h1>Picnic Planner</h1><label class="f">Family code<input type="text" id="cin" autocapitalize="none" autocomplete="off"></label><button class="b" data-a="code">Open</button></div>';return}
+if(!code){app.innerHTML='<div class="card"><h1>McNeice-Lake Planner</h1><label class="f">Family code<input type="text" id="cin" autocapitalize="none" autocomplete="off"></label><button class="b" data-a="code">Open</button></div>';return}
 const logo='<svg viewBox="0 0 40 44" width="38" height="42" aria-hidden="true"><path d="M20 42C6 34 3 22 6 16c4-6 24-6 28 0 3 6 0 18-14 26z" fill="#C81E3A"/><path d="M20 13L12 4l6 5 2-7 2 7 6-5z" fill="#2E7D32"/><g fill="#FFE9A8"><ellipse cx="14" cy="20" rx="1.2" ry="1.8"/><ellipse cx="22" cy="19" rx="1.2" ry="1.8"/><ellipse cx="28" cy="23" rx="1.2" ry="1.8"/><ellipse cx="18" cy="27" rx="1.2" ry="1.8"/><ellipse cx="25" cy="30" rx="1.2" ry="1.8"/><ellipse cx="20" cy="35" rx="1.2" ry="1.8"/></g></svg>';
 const v=TABS.find(t=>t[0]==tab)[2];
-app.innerHTML=`<div class="top">${logo}<h1>Picnic Planner</h1><small id="st">${esc(status)}</small></div><div class="trail" aria-hidden="true"><svg class="ant"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-5s"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-11s"><use href="#ant"/></svg></div>${v()}<nav class="nav">${TABS.map(t=>`<button class="${t[0]==tab?"on":""}" data-a="tab" data-k="${t[0]}">${t[1]}</button>`).join("")}</nav>`}
+app.innerHTML=`<div class="top">${logo}<h1>McNeice-Lake Planner</h1><small id="st">${esc(status)}</small></div><div class="trail" aria-hidden="true"><svg class="ant"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-5s"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-11s"><use href="#ant"/></svg></div>${v()}<nav class="nav">${TABS.map(t=>`<button class="${t[0]==tab?"on":""}" data-a="tab" data-k="${t[0]}">${t[1]}</button>`).join("")}</nav>`}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,k=b.dataset.k,cw=iso(monday(new Date())),td=iso(new Date());
 if(a=="tab"){tab=k;window.scrollTo(0,0)}
 else if(a=="wk")wk=addD(wk,7*+k);
