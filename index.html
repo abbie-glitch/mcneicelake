@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#C81E3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Picnic">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Picnic Planner</title>
+<style>
+:root{--r:#C81E3A;--ink:#3A0F16;--cream:#FFFDF9;--g:#2E7D32;--mut:#7A4A52;box-sizing:border-box}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:18px;background-color:#fff;background-image:linear-gradient(rgba(200,30,58,.2) 50%,transparent 50%),linear-gradient(90deg,rgba(200,30,58,.2) 50%,transparent 50%);background-size:44px 44px}
+#app{max-width:480px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(96px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+h1{margin:0;font-family:Georgia,serif;font-style:italic;font-size:30px;line-height:1.1}
+h2{margin:0;font-family:Georgia,serif;font-style:italic;font-size:23px}
+h3{margin:0;font-size:17px}
+.card{background:var(--cream);border:2.5px solid var(--r);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;align-items:center;gap:10px;background:var(--cream);border:2.5px solid var(--r);border-radius:20px;padding:10px 14px}
+.top small{margin-left:auto;font-size:13px;color:var(--mut);text-align:right}
+.trail{height:20px;overflow:hidden;position:relative;margin:-4px 0}
+.ant{position:absolute;left:-30px;top:2px;width:26px;height:16px;animation:walk 16s linear infinite}
+@keyframes walk{to{transform:translateX(calc(100vw + 60px))}}
+@media (prefers-reduced-motion:reduce){.ant{animation:none;left:12%}.ant:nth-child(2){left:48%}.ant:nth-child(3){left:80%}}
+button{font:inherit;color:inherit;cursor:pointer}
+.b{background:var(--r);color:#fff;font-weight:700;font-size:18px;min-height:52px;border:0;border-radius:14px;padding:0 18px}
+.b2{background:#fff;color:var(--r);font-weight:700;border:2.5px solid var(--r);border-radius:14px;min-height:48px;padding:0 14px;font-size:17px}
+input[type=text],input[type=time],input[type=date],select{font:inherit;font-size:18px;color:var(--ink);width:100%;min-height:48px;border:2px solid #F0C9CF;border-radius:12px;padding:8px 12px;background:#fff}
+input:focus,select:focus{outline:3px solid #F7A8B4}
+label.f{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:16px}
+.row{display:flex;align-items:center;gap:12px;min-height:50px;text-align:left;background:none;border:0;padding:2px 0;width:100%;font-size:18px}
+.box{width:30px;height:30px;border-radius:9px;border:2.5px solid var(--r);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;background:#fff}
+.row.on .box{background:var(--r);color:#fff}
+.item{display:flex;align-items:center;gap:8px;min-height:50px}
+.item>.row{flex:1;min-width:0}
+.item>span{flex:1}
+.del{width:46px;height:46px;border:0;background:none;font-size:26px;color:var(--mut);flex-shrink:0}
+.add{display:flex;flex-direction:column;gap:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ans{border-radius:16px;padding:14px;border:2.5px solid;display:flex;flex-direction:column;gap:4px}
+.ans b{font-size:24px;line-height:1.2}
+.ans.yes{background:#E3F4E5;border-color:var(--g)}
+.ans.no{background:#FFF1D6;border-color:#C98A00}
+.ans.lim{background:#FDE1E4;border-color:var(--r)}
+.pill{display:inline-block;border-radius:999px;padding:3px 12px;font-weight:700;font-size:15px;background:#FDE1E4;border:2px solid var(--r);white-space:nowrap}
+.pill.ok{background:#E3F4E5;border-color:var(--g)}
+.mut{color:var(--mut);font-size:15px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--cream);border-top:3px solid var(--r);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));gap:4px}
+.nav button{border:0;background:none;min-height:50px;font-weight:700;font-size:15px;border-radius:12px;padding:0}
+.nav button.on{background:var(--r);color:#fff}
+.wk{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wk .b2{width:50px;padding:0;font-size:24px}
+details summary{font-weight:700;min-height:44px;display:flex;align-items:center}
+.cb{display:flex;align-items:center;gap:10px;font-size:17px;min-height:44px}
+.cb input{width:26px;height:26px;accent-color:var(--r)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="ant" viewBox="0 0 26 16"><g fill="#2B1B1B" stroke="#2B1B1B" stroke-width="1" stroke-linecap="round"><ellipse cx="5" cy="8" rx="5" ry="3.5"/><circle cx="13" cy="8" r="2.6"/><circle cx="19.5" cy="8" r="3"/><path fill="none" d="M11 8L8 2M13 8L13 1M15 8L18 2M11 8L8 14M13 8L13 15M15 8L18 14M21 6L25 2M21 10L25 14"/></g></symbol></svg>
+<div id="app"></div>
+<script>
+const API="https://script.google.com/macros/s/AKfycbwpcnLnaJUMTgI7x2UeBzSMOlcC50BJrLzHvgoQgwqpuhk0ao7-q8vWGmwYx3Y5hzz2/exec";
+const PEOPLE=["Sheila","Bill","Megan"],DN=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const fromIso=s=>{const p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])};
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const monday=d=>{const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const fd=(d,o)=>d.toLocaleDateString("en-IE",o);
+const tm=ms=>new Date(ms).toLocaleTimeString("en-IE",{hour:"numeric",minute:"2-digit"});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const val=id=>{const e=document.getElementById(id);return e?e.value.trim():""};
+let S={},pend={},code="";
+try{S=JSON.parse(localStorage.getItem("fp_s")||"{}");pend=JSON.parse(localStorage.getItem("fp_p")||"{}");code=localStorage.getItem("fp_c")||""}catch(e){}
+let tab="today",wk=monday(new Date()),status="";
+const keep=()=>{try{localStorage.setItem("fp_s",JSON.stringify(S));localStorage.setItem("fp_p",JSON.stringify(pend))}catch(e){}};
+const ready=()=>API.indexOf("http")===0;
+function setStatus(t){status=t;const e=document.getElementById("st");if(e)e.textContent=t}
+let ft;
+function set(k,v){if(v===null)delete S[k];else S[k]=v;pend[k]=v;keep();clearTimeout(ft);ft=setTimeout(flush,700);setStatus("Saving...")}
+function list(pre){return Object.keys(S).filter(k=>k.indexOf(pre)===0).map(k=>Object.assign({k:k},S[k]))}
+async function flush(){if(!ready()||!code)return;const snap=pend;if(!Object.keys(snap).length)return;pend={};keep();
+try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({code:code,set:snap})});const j=await r.json();if(j.error)throw 0;setStatus("Synced")}
+catch(e){Object.keys(snap).forEach(k=>{if(!(k in pend))pend[k]=snap[k]});keep();setStatus("Offline: saved on this phone")}}
+async function pull(){if(!ready()||!code)return;
+try{const r=await fetch(API+"?code="+encodeURIComponent(code)+"&t="+Date.now());const j=await r.json();
+if(j.error){code="";localStorage.removeItem("fp_c");render();return}
+const n={};for(const k in j.data){try{n[k]=JSON.parse(j.data[k])}catch(e){n[k]=j.data[k]}}
+for(const k in pend){if(pend[k]===null)delete n[k];else n[k]=pend[k]}
+S=n;keep();setStatus("Synced");const a=document.activeElement;if(!a||!/INPUT|SELECT/.test(a.tagName))render()}
+catch(e){setStatus("Offline: saved on this phone")}}
+const inp=(k,l,ph)=>`<label class="f">${l}<input type="text" data-k="${esc(k)}" placeholder="${esc(ph||"")}" value="${esc(S[k])}"></label>`;
+const chk=(on,l,a,k)=>`<button class="row${on?" on":""}" data-a="${a}" data-k="${esc(k)}"><span class="box">${on?"&#10003;":""}</span><span>${l}</span></button>`;
+const del=k=>`<button class="del" data-a="del" data-k="${esc(k)}" aria-label="Remove">&times;</button>`;
+function pain(){const hrs=+S["set|painHrs"]||4,max=+S["set|painMax"]||0,now=Date.now();
+const ds=list("pain|").sort((a,b)=>a.t-b.t),last=ds.length?ds[ds.length-1].t:0,c24=ds.filter(x=>now-x.t<864e5).length,next=last+hrs*36e5;
+let cls,msg,sub;
+if(max&&c24>=max){cls="lim";msg="Not yet. The daily limit has been reached.";sub=c24+" dose"+(c24==1?"":"s")+" in the last 24 hours. Please check the label or ask the pharmacist."}
+else if(!last||now>=next){cls="yes";msg=last?"Yes, it's been "+hrs+" hours or more.":"No doses logged yet.";sub=last?"Last dose at "+tm(last)+".":"Check the label before the first dose."}
+else{cls="no";const m=Math.ceil((next-now)/6e4);msg="Not yet. Next dose from "+tm(next)+".";sub="That's in "+(m>=60?Math.floor(m/60)+" h ":"")+(m%60)+" min. Last dose at "+tm(last)+"."}
+const td=iso(new Date()),today=ds.filter(x=>iso(new Date(x.t))==td);
+return `<div class="card"><h2>Is it time to take drugs yet?</h2><div class="ans ${cls}"><b>${msg}</b><span>${sub}</span></div>
+<button class="b" data-a="pain">I took it just now</button>
+<div class="add"><label class="f">Took it earlier? Pick the time<input type="time" id="pt"></label><button class="b2" data-a="painAt">Add that time</button></div>
+<h3>Today's doses</h3>${today.length?today.map(x=>`<div class="item"><span>${tm(x.t)}</span>${del(x.k)}</div>`).join(""):'<span class="mut">None logged today.</span>'}
+<details><summary>Settings</summary><div class="add">${inp("set|painHrs","Hours between doses","4")}${inp("set|painMax","Most doses in 24 hours (from the label)","Leave blank if unsure")}</div></details>
+<span class="mut">A reminder log only. Always follow the label, doctor or pharmacist.</span></div>`}
+function meds(d){const slots=[["Sheila","am","Sheila, morning"],["Sheila","pm","Sheila, evening"],["Bill","am","Bill, morning"],["Bill","pm","Bill, evening"],["Megan","am","Megan"]];
+return `<div class="card"><h2>Meds taken today</h2>${slots.map(s=>{const k="med|"+d+"|"+s[0]+"|"+s[1];return chk(S[k],s[2],"tog",k)}).join("")}</div>`}
+const meals=(d,t)=>`<div class="card"><h2>${t}</h2>${inp("meal|"+d+"|b","Breakfast")}${inp("meal|"+d+"|l","Lunch")}${inp("meal|"+d+"|d","Dinner")}${inp("swim|"+d,"Swim: who and when?")}</div>`;
+const apptRow=a=>`<div class="item"><span><b>${esc(a.t||"")}</b> ${esc(a.w)}: ${esc(a.x)}</span>${del(a.k)}</div>`;
+function dueLbl(b){const df=Math.round((fromIso(b.d)-fromIso(iso(new Date())))/864e5);return df<0?["Overdue by "+(-df)+" day"+(df==-1?"":"s"),0]:df==0?["Due today",0]:["Due in "+df+" day"+(df==1?"":"s"),df<=3?0:1]}
+const billRow=b=>{const l=dueLbl(b);return `<div class="item"><span><b>${esc(b.n)}</b> ${esc(b.amt)}<br><span class="pill${l[1]?" ok":""}">${l[0]}</span> <span class="mut">${fd(fromIso(b.d),{day:"numeric",month:"short"})}</span></span><button class="b2" data-a="paid" data-k="${esc(b.k)}">Paid</button>${del(b.k)}</div>`};
+const chatRow=c=>`<div class="item"><span><b>${esc(c.w)}</b> ${esc(c.x||"")}<br><span class="mut">${tm(c.t)}</span></span>${del(c.k)}</div>`;
+function vToday(){const d=iso(new Date()),ap=list("appt|").filter(a=>a.d==d).sort((a,b)=>(a.t||"")<(b.t||"")?-1:1),
+bl=list("bill|").filter(b=>!b.paid&&Math.round((fromIso(b.d)-fromIso(d))/864e5)<=7).sort((a,b)=>a.d<b.d?-1:1),ch=list("chat|").filter(c=>c.d==d).sort((a,b)=>a.t-b.t);
+return pain()+meds(d)+meals(d,"Today's meals")+`<div class="card"><h2>Appointments today</h2>${ap.length?ap.map(apptRow).join(""):'<span class="mut">Nothing booked today.</span>'}</div>
+<div class="card"><h2>Bills due soon</h2>${bl.length?bl.map(billRow).join(""):'<span class="mut">Nothing due this week.</span>'}</div>
+<div class="card"><h2>Who did we chat to today?</h2>${ch.length?ch.map(chatRow).join(""):'<span class="mut">No chats logged yet.</span>'}<button class="b2" data-a="tab" data-k="chats">Add a chat</button></div>`}
+function vWeek(){const days=[...Array(7)].map((_,i)=>addD(wk,i)),ap=list("appt|").filter(a=>a.d>=iso(days[0])&&a.d<=iso(days[6]));
+return `<div class="wk"><button class="b2" data-a="wk" data-k="-1" aria-label="Previous week">&#8249;</button><h2>Week of ${fd(wk,{day:"numeric",month:"short"})}</h2><button class="b2" data-a="wk" data-k="1" aria-label="Next week">&#8250;</button></div>`+
+days.map((x,i)=>meals(iso(x),DN[i]+" "+fd(x,{day:"numeric",month:"short"}))).join("")+
+`<div class="card"><h2>Appointments this week</h2>${PEOPLE.map(p=>{const m=ap.filter(a=>a.w==p).sort((a,b)=>(a.d+(a.t||""))<(b.d+(b.t||""))?-1:1);return `<h3>${p}</h3>${m.length?m.map(a=>`<div class="item"><span><b>${DN[(fromIso(a.d).getDay()+6)%7]}</b> ${esc(a.t||"")} ${esc(a.x)}</span>${del(a.k)}</div>`).join(""):'<span class="mut">None</span>'}`}).join("")}
+<h3>Add an appointment</h3><div class="add"><div class="two"><select id="aw">${PEOPLE.map(p=>`<option>${p}</option>`).join("")}</select><select id="ad">${days.map((x,i)=>`<option value="${iso(x)}">${DN[i].slice(0,3)} ${x.getDate()}</option>`).join("")}</select></div><input type="time" id="at" aria-label="Time"><input type="text" id="ax" placeholder="What is it?"><button class="b" data-a="addap">Add</button></div></div>`}
+function vTodo(){const cw=iso(monday(new Date())),all=list("todo|"),it=all.filter(t=>!t.done||(t.rep&&t.dw!==cw)).sort((a,b)=>(a.c||0)-(b.c||0)),dn=all.filter(t=>t.done&&t.dw===cw).length;
+return `<div class="card"><h2>To do this week</h2>${it.length?it.map(t=>`<div class="item">${chk(false,esc(t.x)+(t.rep?' <span class="mut">(weekly)</span>':""),"td",t.k)}${del(t.k)}</div>`).join(""):'<span class="mut">All done. Lovely!</span>'}
+${dn?`<span class="mut">${dn} done this week</span>`:""}<h3>Add something</h3><div class="add"><input type="text" id="tx" placeholder="What needs doing?"><label class="cb"><input type="checkbox" id="trep">Repeats every week</label><button class="b" data-a="addt">Add</button></div></div>`}
+function vBills(){const all=list("bill|"),un=all.filter(b=>!b.paid).sort((a,b)=>a.d<b.d?-1:1),pd=all.filter(b=>b.paid).sort((a,b)=>(a.pd||"")<(b.pd||"")?1:-1).slice(0,5);
+return `<div class="card"><h2>Bills and payments</h2>${un.length?un.map(billRow).join(""):'<span class="mut">Nothing due.</span>'}<h3>Add a bill</h3><div class="add"><input type="text" id="bn" placeholder="What is it? (e.g. electricity)"><input type="text" id="ba" placeholder="Amount (e.g. 85)"><label class="f">Due date<input type="date" id="bd"></label><label class="cb"><input type="checkbox" id="brep">Repeats every month</label><button class="b" data-a="addb">Add</button></div></div>
+${pd.length?`<div class="card"><h2>Recently paid</h2>${pd.map(b=>`<div class="item"><span>${esc(b.n)} ${esc(b.amt)} <span class="mut">paid ${fd(fromIso(b.pd),{day:"numeric",month:"short"})}</span></span>${del(b.k)}</div>`).join("")}</div>`:""}`}
+function vChats(){const d=iso(new Date()),all=list("chat|"),ch=all.filter(c=>c.d==d).sort((a,b)=>a.t-b.t),old=all.filter(c=>c.d<d&&c.d>=iso(addD(new Date(),-7))).sort((a,b)=>b.t-a.t);
+return `<div class="card"><h2>Who did we chat to today?</h2>${ch.length?ch.map(chatRow).join(""):'<span class="mut">No chats logged yet.</span>'}<h3>Add a chat</h3><div class="add"><input type="text" id="cw" placeholder="Who?"><input type="text" id="cx" placeholder="What about? (optional)"><button class="b" data-a="addc">Add</button></div></div>
+${old.length?`<div class="card"><h2>Earlier this week</h2>${old.map(c=>`<div class="item"><span><b>${esc(c.w)}</b> ${esc(c.x||"")}<br><span class="mut">${fd(fromIso(c.d),{weekday:"long"})}, ${tm(c.t)}</span></span>${del(c.k)}</div>`).join("")}</div>`:""}`}
+const TABS=[["today","Today",vToday],["week","Week",vWeek],["todo","To-do",vTodo],["bills","Bills",vBills],["chats","Chats",vChats]];
+function render(){const app=document.getElementById("app");
+if(!ready()){app.innerHTML='<div class="card"><h2>Not set up yet</h2><span>Paste your web app link into the API line at the top of the script in index.html.</span></div>';return}
+if(!code){app.innerHTML='<div class="card"><h1>Picnic Planner</h1><label class="f">Family code<input type="text" id="cin" autocapitalize="none" autocomplete="off"></label><button class="b" data-a="code">Open</button></div>';return}
+const logo='<svg viewBox="0 0 40 44" width="38" height="42" aria-hidden="true"><path d="M20 42C6 34 3 22 6 16c4-6 24-6 28 0 3 6 0 18-14 26z" fill="#C81E3A"/><path d="M20 13L12 4l6 5 2-7 2 7 6-5z" fill="#2E7D32"/><g fill="#FFE9A8"><ellipse cx="14" cy="20" rx="1.2" ry="1.8"/><ellipse cx="22" cy="19" rx="1.2" ry="1.8"/><ellipse cx="28" cy="23" rx="1.2" ry="1.8"/><ellipse cx="18" cy="27" rx="1.2" ry="1.8"/><ellipse cx="25" cy="30" rx="1.2" ry="1.8"/><ellipse cx="20" cy="35" rx="1.2" ry="1.8"/></g></svg>';
+const v=TABS.find(t=>t[0]==tab)[2];
+app.innerHTML=`<div class="top">${logo}<h1>Picnic Planner</h1><small id="st">${esc(status)}</small></div><div class="trail" aria-hidden="true"><svg class="ant"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-5s"><use href="#ant"/></svg><svg class="ant" style="animation-delay:-11s"><use href="#ant"/></svg></div>${v()}<nav class="nav">${TABS.map(t=>`<button class="${t[0]==tab?"on":""}" data-a="tab" data-k="${t[0]}">${t[1]}</button>`).join("")}</nav>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,k=b.dataset.k,cw=iso(monday(new Date())),td=iso(new Date());
+if(a=="tab"){tab=k;window.scrollTo(0,0)}
+else if(a=="wk")wk=addD(wk,7*+k);
+else if(a=="code"){const c=val("cin");if(!c)return;code=c;localStorage.setItem("fp_c",c);pull()}
+else if(a=="tog")set(k,!S[k]);
+else if(a=="del")set(k,null);
+else if(a=="pain")set("pain|"+uid(),{t:Date.now()});
+else if(a=="painAt"){const v=val("pt");if(!v)return;const p=v.split(":"),x=new Date();x.setHours(+p[0],+p[1],0,0);if(x>new Date())x.setDate(x.getDate()-1);set("pain|"+uid(),{t:x.getTime()})}
+else if(a=="addap"){const x=val("ax");if(!x)return;set("appt|"+uid(),{w:val("aw"),d:val("ad"),t:val("at"),x:x})}
+else if(a=="td")set(k,Object.assign({},S[k],{done:true,dw:cw}));
+else if(a=="addt"){const x=val("tx");if(!x)return;set("todo|"+uid(),{x:x,rep:document.getElementById("trep").checked,done:false,c:Date.now()})}
+else if(a=="addb"){const n=val("bn"),d=val("bd");if(!n||!d)return;set("bill|"+uid(),{n:n,amt:val("ba"),d:d,rep:document.getElementById("brep").checked,paid:false})}
+else if(a=="paid"){const x=S[k];set(k,Object.assign({},x,{paid:true,pd:td}));if(x.rep){const m=fromIso(x.d),t=new Date(m.getFullYear(),m.getMonth()+1,1);t.setDate(Math.min(m.getDate(),new Date(t.getFullYear(),t.getMonth()+1,0).getDate()));set("bill|"+uid(),{n:x.n,amt:x.amt,d:iso(t),rep:true,paid:false})}}
+else if(a=="addc"){const w=val("cw");if(!w)return;set("chat|"+uid(),{d:td,t:Date.now(),w:w,x:val("cx")})}
+render()});
+document.addEventListener("input",e=>{const k=e.target.dataset&&e.target.dataset.k;if(k&&e.target.tagName=="INPUT")set(k,e.target.value)});
+document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.k;if(k&&k.indexOf("set|")==0)render()});
+document.addEventListener("keydown",e=>{if(e.key!="Enter")return;const m={tx:"addt",cw:"addc",cx:"addc",ax:"addap",bn:"addb",ba:"addb",cin:"code"}[e.target.id];if(m){const b=document.querySelector('[data-a="'+m+'"]');if(b)b.click()}});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){pull();flush()}});
+setInterval(()=>{pull();flush()},15000);
+setInterval(()=>{const a=document.activeElement;if(tab=="today"&&(!a||!/INPUT|SELECT/.test(a.tagName)))render()},30000);
+render();pull();flush();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
