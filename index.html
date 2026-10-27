@@ -11,16 +11,19 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@300;400;600;700&display=swap">
 <title>McNeice-Lake Planner</title>
 <style>
-:root{--r:#C81E3A;--ink:#3A0F16;--cream:#FFFDF9;--g:#2E7D32;--mut:#6B3A44;--thin:200;--pk:#F2B6C0;box-sizing:border-box}
+:root{--r:#C81E3A;--ink:#3A0F16;--cream:#FFFDF9;--g:#2E7D32;--mut:#6B3A44;--thin:400;--hf:"Baloo 2","Nunito","Helvetica Neue",system-ui,sans-serif;--pk:#F2B6C0;box-sizing:border-box}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:var(--thin);font-size:18px;background-color:#fff;background-image:linear-gradient(rgba(200,30,58,.2) 50%,transparent 50%),linear-gradient(90deg,rgba(200,30,58,.2) 50%,transparent 50%);background-size:44px 44px;overflow-x:hidden}
+body{margin:0;color:var(--ink);font-family:"Nunito","Helvetica Neue",system-ui,-apple-system,sans-serif;font-weight:var(--thin);font-size:18px;background-color:#fff;background-image:linear-gradient(rgba(200,30,58,.2) 50%,transparent 50%),linear-gradient(90deg,rgba(200,30,58,.2) 50%,transparent 50%);background-size:44px 44px;overflow-x:hidden}
 #app{max-width:480px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(104px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
-h1{margin:0;font-weight:700;font-size:22px;line-height:1.1}
-h2{margin:0;font-weight:700;font-size:21px;line-height:1.15}
-h3{margin:0;font-size:17px}
+h1{margin:0;font-family:var(--hf);font-weight:700;font-size:23px;line-height:1.1}
+h2{margin:0;font-family:var(--hf);font-weight:700;font-size:22px;line-height:1.15}
+h3{margin:0;font-family:var(--hf);font-weight:700;font-size:18px}
 .card{background:var(--cream);border:2.5px solid var(--r);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 4px 0 var(--pk);min-width:0}
 .card>*,.add>*,.two>*,.f>*,.item>*{min-width:0}
 .top{display:flex;align-items:center;gap:10px;background:var(--cream);border:2.5px solid var(--r);border-radius:22px;padding:8px 14px;box-shadow:0 4px 0 var(--pk)}
@@ -28,7 +31,7 @@ h3{margin:0;font-size:17px}
 .ttl small{font-size:12px;color:var(--mut);line-height:1.2;min-height:14px}
 .hello{align-items:center;text-align:center;background:#FFF1F3;gap:2px}
 .hello .dow{font-size:20px;font-weight:700}
-.hello .big{font-weight:700;font-size:34px;line-height:1.1}
+.hello .big{font-family:var(--hf);font-weight:700;font-size:36px;line-height:1.1}
 .trail{height:20px;overflow:hidden;position:relative;margin:-6px 0}
 .ant{position:absolute;left:-30px;top:2px;width:26px;height:16px;animation:walk 16s linear infinite}
 @keyframes walk{to{transform:translateX(calc(100vw + 60px))}}
@@ -36,7 +39,7 @@ h3{margin:0;font-size:17px}
 button{font:inherit;color:inherit;cursor:pointer}
 .b{background:var(--r);color:#fff;font-weight:700;font-size:18px;min-height:52px;border:0;border-radius:999px;padding:0 18px;box-shadow:0 3px 0 #8E1229}
 .b2{background:#fff;color:var(--r);font-weight:700;border:2.5px solid var(--r);border-radius:999px;min-height:48px;padding:0 14px;font-size:17px}
-input[type=text],input[type=time],input[type=date],select{font:inherit;font-size:18px;color:var(--ink);width:100%;max-width:100%;min-width:0;min-height:48px;border:2px solid #F0C9CF;border-radius:14px;padding:8px 12px;background:#fff;margin:0;font-weight:300}
+input[type=text],input[type=time],input[type=date],select{font:inherit;font-size:18px;color:var(--ink);width:100%;max-width:100%;min-width:0;min-height:48px;border:2px solid #F0C9CF;border-radius:14px;padding:8px 12px;background:#fff;margin:0;font-weight:400}
 input[type=time],input[type=date]{-webkit-appearance:none;appearance:none;display:block;text-align:left}
 input:focus,select:focus{outline:3px solid #F7A8B4}
 label.f{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:16px;min-width:0}
@@ -185,7 +188,7 @@ function vIdeas(){const all=list("idea|").sort((a,b)=>(b.c||0)-(a.c||0)),pk=pick
 return `<div class="card"><h2>\u{1F373} Meal ideas</h2>${all.length?'<button class="b2" data-a="pick">Pick one for me \u{1F3B2}</button>':""}${pk?`<div class="ans yes"><b>${esc(pk.x)}</b>${pk.n?`<span>${esc(pk.n)}</span>`:""}</div>`:""}${all.length?all.map(i=>`<div class="item"><span><b>${esc(i.x)}</b>${i.n?`<br><span class="mut">${esc(i.n)}</span>`:""}</span>${del(i.k)}</div>`).join(""):'<span class="mut">Nothing saved yet. Add the meals you all like.</span>'}<h3>Save an idea</h3><div class="add"><input type="text" id="idx" placeholder="Meal name"><input type="text" id="idn" placeholder="Notes or link (optional)"><button class="b" data-a="addid">Add</button></div></div>`}
 function vLists(){const segs=[["todo","To-do"],["shop","Shopping"],["ideas","Meal ideas"]];
 return `<div class="seg">${segs.map(x=>`<button class="${lt==x[0]?"on":""}" data-a="lt" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`+(lt=="shop"?vShop():lt=="ideas"?vIdeas():vTodo())}
-const TABS=[["today","Today","\u{1F3E0}",vToday],["week","Week","\u{1F4C5}",vWeek],["lists","Lists","\u{1F4DD}",vLists],["bills","Bills","\u{1F4B6}",vBills],["chats","Chats","\u{1F4AC}",vChats]];
+const TABS=[["today","Today","\u{1F353}",vToday],["week","Week","\u{1F41E}",vWeek],["lists","Lists","\u{1F955}",vLists],["bills","Bills","\u{1F34B}",vBills],["chats","Chats","\u{1F41D}",vChats]];
 function render(){const app=document.getElementById("app");
 if(!ready()){app.innerHTML='<div class="card"><h2>Not set up yet</h2><span>Paste your web app link into the API line at the top of the script in index.html.</span></div>';return}
 if(!code){app.innerHTML='<div class="card"><h1>McNeice-Lake Planner</h1><label class="f">Family code<input type="text" id="cin" autocapitalize="none" autocomplete="off"></label><button class="b" data-a="code">Open</button></div>';return}
